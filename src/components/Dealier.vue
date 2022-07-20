@@ -9,7 +9,7 @@
 			</span>
 		</div>
 		<ul class="divide-y divide-slate-800 max-h-[85px] overflow-y-auto block">
-			<li v-for="(item, index) in 3" :key="index" class="flex items-center gap-4 cursor-pointer px-6 py-4">
+			<li v-for="(item, index) in 0" :key="index" class="flex items-center gap-4 cursor-pointer px-6 py-4">
 				<img src="http://via.placeholder.com/46" alt="Dummy" class="flex items-center rounded-full w-[46px] h-[46px] overflow-hidden">
 				<div class="flex flex-col justify-center">
 					<h5 class="font-bold text-sm mb-1 text-white">John Doe</h5>
@@ -154,7 +154,7 @@ export default {
 			this.fakeCall()
 		},
 		fakeCall() {
-			
+
 		}
 	},
 	watch: {
