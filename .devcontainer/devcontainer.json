@@ -1,0 +1,27 @@
+{
+	"name": "Atendimento",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "18-bullseye"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions" : [
+				"dbaeumer.vscode-eslint",
+                "anseki.vscode-color",
+                "GitHub.copilot",
+                "sainoba.px-to-rem",
+                "bradlc.vscode-tailwindcss",
+                "neptunedesign.vs-sequential-number",
+                "Wscats.vue",
+                "naumovs.color-highlight",
+                "esbenp.prettier-vscode"
+			]
+		}
+	},
+	"remoteUser": "node",
+	"appPort": ["8080:8080"],
+	"forwardPorts": [8080]
+}
