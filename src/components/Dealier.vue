@@ -190,7 +190,7 @@ export default {
 
 			return masked
 		},
-		keyPress(e) {
+		keydown(e) {
 			if( !this.isOpen ) return
 
 			if( e.keyCode >= 48 && e.keyCode <= 57 ) {
@@ -386,7 +386,7 @@ export default {
 		}
 	},
 	mounted() {
-		window.addEventListener('keydown', this.keyPress)
+		window.addEventListener('keydown', this.keydown)
 
 		// events
 		window.addEventListener('onDialing', this.onDialing)
