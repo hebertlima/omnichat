@@ -23,9 +23,9 @@
 				<input v-model="toCall" type="text" readonly class="w-full text-center leading-5 text-slate-200 h-24 grid place-content-center bg-transparent outline-none"
 					:class="[{'text-3xl': sanitizer(toCall).length <= 21, 'text-lg': sanitizer(toCall).length > 21 && sanitizer(toCall).length <= 32, 'text-sm': sanitizer(toCall).length > 33, 'text-white' : !dealierStatus.inCall, 'text-green-400' : dealierStatus.isOutgoing && dealierStatus.inCall}]">
 			</div>
-			<ul class="bg-gray-500/30 rounded-2xl p-8 grid-cols-3 gap-6 grid">
+			<ul class="bg-gray-500/30 rounded-2xl p-5 grid-cols-3 gap-5 grid">
 				<li v-for="(item, index) in numbers" :key="index" class="mx-auto">
-					<span @click="digit(item.number)" :id="`digit-${item.name}`" v-text="item.number" class="grid place-content-center w-16 h-16 rounded-full cursor-pointer text-white text-2xl hover:bg-gray-500/20"></span>
+					<span @click="digit(item.number)" :id="`digit-${item.name}`" v-text="item.number" class="selection:bg-transparent grid place-content-center w-16 h-16 rounded-full cursor-pointer text-white text-2xl hover:bg-gray-500/20"></span>
 				</li>
 				<li></li>
 				<li class="mx-auto" @click="call()">
@@ -64,12 +64,14 @@ export default {
 		isOpen: {
 			type: Boolean,
 			required: true,
-			del: false,
 		}
 	},
 	data() {
 		return {
 			toCall: '',
+			heroicons: heroicons,
+			del: false,
+			anim: null,
 			numbers: [{
 					number: '1',
 					name: 'one'
@@ -99,7 +101,7 @@ export default {
 					name: 'nine'
 				},{
 					number: '*',
-					name: 'asterisc'
+					name: 'asterisk'
 				},{
 					number: '0',
 					name: 'zero'
@@ -111,31 +113,51 @@ export default {
 				statusText: '',
 				isOutgoing: false,
 				inCall: false,
-				calling: false,
-				dialing: false,
-				closing: false,
+				onCalling: false,
+				onDialing: false,
+				onClosing: false,
 				icon: 'PhoneIcon'
 			},
-			heroicons: heroicons,
-			anim: null,
 			history: [],
 		}
 	},
 	methods: {
+		setDrag() {
+			// eslint-disable-next-line no-undef
+			$(this.$refs.draggable).draggable({
+				handle: this.$refs.handler,
+				cursorAt: { 
+					top: Math.min((Math.min(this.$refs.draggable.clientHeight) / 2) - Math.min(this.$refs.handler.clientHeight + 20 / 2 ))  *-1, 
+					left: 0 
+				},
+				drag: (event, ui) => {
+					const dealerH = (this.$refs.draggable.clientHeight / 2)
+					const dealerW = (this.$refs.draggable.clientWidth / 2)
+
+					if( ui.position.left <= dealerW) ui.position.left = dealerW
+					else if ( ui.position.left >= (window.innerWidth - dealerW )) ui.position.left = window.innerWidth - dealerW
+
+					if( ui.position.top <= dealerH) ui.position.top = dealerH
+					else if ( ui.position.top >= (window.innerHeight - dealerH )) ui.position.top = window.innerHeight - dealerH
+				}
+			})
+		},
 		close() {
 			this.$emit('close', true)
 		},
 		digit(n) {
-			if( !this.dealierStatus.dialing && !this.dealierStatus.closing && !this.dealierStatus.calling ) {
+			if( this.blockInteract() ) {
 				this.del = false
 				this.toCall += n
 			}
 		},
 		erase() {
-			this.del = true
-			let onlyNumers = this.toCall.replace(/[^0-9*#]/g, '')
-			let lastCharacterRemoved = onlyNumers.slice(0,-1)
-			this.toCall = this.getMaskedValue(lastCharacterRemoved)
+			if( this.blockInteract() ) { 
+				this.del = true
+				let onlyNumers = this.sanitizer(this.toCall)
+				let lastCharacterRemoved = onlyNumers.slice(0,-1)
+				this.toCall = this.getMaskedValue(lastCharacterRemoved)
+			}
 		},
 		mask(value, mask) {
 			if( !value || !mask ) return value
@@ -158,36 +180,15 @@ export default {
 			return masked
 		},
 		getMaskedValue(value) {
-			let rawValue = value.replace(/[^0-9*#]/g, '')
 			let masked = ''
 
-			if( rawValue.length <= 10 ) {
-				masked = this.mask(rawValue, '(##) ####-####')
-			} else if ( rawValue.length > 10 && rawValue.length < 12 ) {
-				masked = this.mask(rawValue, '(##) # ####-####')
-			} else masked =  rawValue
+			if( value.length <= 10 ) {
+				masked = this.mask(value, '(##) ####-####')
+			} else if ( value.length > 10 && value.length < 12 ) {
+				masked = this.mask(value, '(##) # ####-####')
+			} else masked =  value
 
 			return masked
-		},
-		setDrag() {
-			// eslint-disable-next-line no-undef
-			$(this.$refs.draggable).draggable({
-				handle: this.$refs.handler,
-				cursorAt: { 
-					top: Math.min((Math.min(this.$refs.draggable.clientHeight) / 2) - Math.min(this.$refs.handler.clientHeight + 20 / 2 ))  *-1, 
-					left: 0 
-				},
-				drag: (event, ui) => {
-					const dealerH = (this.$refs.draggable.clientHeight / 2)
-					const dealerW = (this.$refs.draggable.clientWidth / 2)
-
-					if( ui.position.left <= dealerW) ui.position.left = dealerW
-					else if ( ui.position.left >= (window.innerWidth - dealerW )) ui.position.left = window.innerWidth - dealerW
-
-					if( ui.position.top <= dealerH) ui.position.top = dealerH
-					else if ( ui.position.top >= (window.innerHeight - dealerH )) ui.position.top = window.innerHeight - dealerH
-				}
-			})
 		},
 		keyPress(e) {
 			if( !this.isOpen ) return
@@ -262,9 +263,10 @@ export default {
 				statusText: 'Discando...',
 				isOutgoing: true,
 				inCall: false,
-				calling: false,
-				dialing: true,
-				closing: false,
+				onCalling: false,
+				onDialing: true,
+				onClosing: false,
+				onClosed: false,
 				icon: 'ViewGridIcon'
 			}
 			this.animTyping()
@@ -275,9 +277,10 @@ export default {
 				statusText: 'Chamando...',
 				isOutgoing: true,
 				inCall: false,
-				calling: true,
-				dialing: false,
-				closing: false,
+				onCalling: true,
+				onDialing: false,
+				onClosing: false,
+				onClosed: false,
 				icon: 'PhoneOutgoingIcon'
 			}
 			console.log('chamando...')
@@ -287,11 +290,13 @@ export default {
 				statusText: 'Em ligação...',
 				isOutgoing: true,
 				inCall: true,
-				calling: false,
-				dialing: false,
-				closing: false,
+				onCalling: false,
+				onDialing: false,
+				onClosing: false,
+				onClosed: false,
 				icon: 'XIcon'
 			}
+			this.startTimer()
 			console.log('em ligação...')
 		},
 		onClosing() {
@@ -299,9 +304,10 @@ export default {
 				statusText: 'Encerrando ligação...',
 				isOutgoing: true,
 				inCall: false,
-				calling: false,
-				dialing: false,
-				closing: true,
+				onCalling: false,
+				onDialing: false,
+				onClosing: true,
+				onClosed: false,
 				icon: 'PhoneMissedCallIcon'
 			}
 			console.log('finalizando...')
@@ -311,9 +317,10 @@ export default {
 				statusText: 'Finalizado',
 				isOutgoing: true,
 				inCall: false,
-				calling: false,
-				dialing: false,
-				closing: false,
+				onCalling: false,
+				onDialing: false,
+				onClosing: false,
+				onClosed: true,
 				icon: 'PhoneIcon'
 			}
 			console.log('finalizado...')
@@ -323,9 +330,10 @@ export default {
 				statusText: '',
 				isOutgoing: false,
 				inCall: false,
-				calling: false,
-				dialing: false,
-				closing: false,
+				onCalling: false,
+				onDialing: false,
+				onClosing: false,
+				onClosed: false,
 				icon: 'PhoneIcon'
 			}
 			this.toCall = ''
@@ -347,7 +355,7 @@ export default {
 			this.call()
 		},
 		animTyping() {
-			const number = this.toCall.replace(/[^0-9*#]/g, '')
+			const number = this.sanitizer(this.toCall)
 			const digits = number.split('')
 			const tl = gsap.timeline()
 
@@ -359,12 +367,16 @@ export default {
 					backgroundColor: 'rgba(107, 114, 128, 0.3)'	
 				}).call(() =>  document.querySelector(`#digit-${digit.name}`).removeAttribute('style')).duration(3).delay(2)
 			})
+		},
+		blockInteract() {
+			return !this.dealierStatus.onDialing && !this.dealierStatus.onClosing && !this.dealierStatus.onCalling && !this.dealierStatus.onClosed
+		},
 		}
 	},
 	watch: {
 		toCall(value) {
 			if(this.del) return
-			this.toCall = this.getMaskedValue(value)
+			this.toCall = this.getMaskedValue(this.sanitizer(value))
 		},
 		isOpen(value) {
 			if( value ) {
