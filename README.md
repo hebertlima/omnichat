@@ -23,4 +23,4 @@ yarn lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-!['Capa do projeto'](layout.png)
+!['Capa do projeto'](animation.webp)
