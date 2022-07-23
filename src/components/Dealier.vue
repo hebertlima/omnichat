@@ -234,19 +234,19 @@ export default {
 
 			const fake = new Promise(resolve => {
 				this.sendEvent('onDialing', { number: this.toCall })
-				setTimeout(resolve, 8000)
+				setTimeout(resolve, 3000)
 			}).then(() => new Promise(resolve => {
 				this.sendEvent('onCalling')
-				setTimeout(resolve, 8000)
+				setTimeout(resolve, 5000)
 			}).then(() => new Promise(resolve => {
 				this.sendEvent('inCall')
-				setTimeout(resolve, 8000)
+				setTimeout(resolve, 5000)
 			})).then(() => new Promise(resolve => {
 				this.sendEvent('onClosing')
-				setTimeout(resolve, 8000)
+				setTimeout(resolve, 3000)
 			})).then(() => new Promise(resolve => {
 				this.sendEvent('closed')
-				setTimeout(resolve, 8000)
+				setTimeout(resolve, 2000)
 			})))
 
 			fake.then(() => {
@@ -267,6 +267,7 @@ export default {
 				closing: false,
 				icon: 'ViewGridIcon'
 			}
+			this.animTyping()
 			console.log('discando...')
 		},
 		onCalling() {
