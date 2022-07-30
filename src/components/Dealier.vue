@@ -371,7 +371,6 @@ export default {
 		blockInteract() {
 			return !this.dealierStatus.onDialing && !this.dealierStatus.onClosing && !this.dealierStatus.onCalling && !this.dealierStatus.onClosed
 		},
-		}
 	},
 	watch: {
 		toCall(value) {
