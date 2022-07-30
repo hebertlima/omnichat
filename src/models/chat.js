@@ -3,21 +3,22 @@ export default class Chat {
 		this.picture = options.picture || 'http://via.placeholder.com/56'
 		this.name = options.name
 		this.text = options.text
-		this.fromMe = options.fromMe
+		this.number = this.sanitizer(options.number)
 		this.messages = []
 
-		this.addMessage(options)
+		if( options.text )
+			this.addMessage(options)
 	}
 
 	addMessage = function( options ) {
-		const picture = options.picture || 'http://via.placeholder.com/56'
 		this.messages.push({
-			picture: options.fromMe ? picture : this.picture,
-			name: options.fromMe ? options.name : this.name,
-			text: options.text,
-			time: Math.floor(new Date().getTime() / 1000),
+			number: this.sanitizer(options.number),
+			picture:  options.picture || this.picture,
+			name: options.name || this.name,
 			fromMe: options.fromMe,
+			text: options.text,
 			read: options.read,
+			time: Math.floor(new Date().getTime() / 1000),
 			getHumanTime: this.getHumanTime.bind(this),
 			isLastMessageMy: this.isLastMessageMy.bind(this)
 		})
@@ -80,6 +81,10 @@ export default class Chat {
 
 	isLastMessageMy = function() {
 		if( !this.messages.length ) return ''
-		return this.messages[this.messages.length - 1].fromMe
+		return this.messages[this.messages.length - 1].number = this.number
+	}
+
+	sanitizer = function(number) { 
+		return number.replace(/[^0-9*#]/g, '')
 	}
 }
