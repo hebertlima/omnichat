@@ -2,7 +2,7 @@
 	<div v-if="isAuthenticated" class="rounded-2xl my-4 px-4 bg-white grid grid-cols-[calc(auto,71px)]">
 		<div class="">
 			<ul ref="messagesContainer" class="p-6 flex flex-col overflow-y-auto h-[calc(100vh-75px)]">
-				<Message v-for="(message, index) in []" :key="index" :message="message" />
+				<Message v-for="(message, index) in currentChat.messages" :key="index" :message="message" />
 			</ul>
 		</div>
 		<div class="py-4 grid items-center">
@@ -17,7 +17,7 @@
 				<button class="w-8 grid place-items-center my-3 min-w-fit">
 					<EmojiHappyIcon class="w-4 mx-auto" />
 				</button>
-				<button class="w-8 grid place-items-center my-3 min-w-fit" >
+				<button @click="pushMessage()" class="w-8 grid place-items-center my-3 min-w-fit" >
 					<PaperAirplaneIcon class="w-4 mx-auto rotate-45 relative -top-[2px]" />
 				</button>
 			</div>
@@ -34,6 +34,7 @@
 <script>
 import Message from '@/components/Message.vue'
 import Chat from '@/models/chat.js'
+import socket from '@/services/socket.js'
 
 import {
 	PaperClipIcon,
@@ -58,7 +59,8 @@ export default {
 				name: '',
 				number: ''
 			},
-			chat: null,
+			currentChat: null,
+			text: '',
 		}
 	},
 	methods: {
@@ -68,13 +70,89 @@ export default {
 
 				this.isAuthenticated = true
 
-				this.chat = new Chat({
+				this.currentChat = new Chat({
 					name: name, 
 					number: number,
-					picture: require('@/assets/goku.jpeg'),
+					picture: require(`@/assets/${this.form.name}.jpeg`),
+					time: Math.floor(new Date().getTime() / 1000)
 				})
+
+				socket.auth = {
+					name,
+					number : this.sanitizer(number),
+				}
+
+				socket.connect()
+
+				socket.on('WELCOME', message => console.log(message))
 			}
-		}
+		},
+		mask(value, mask) {
+			if( !value || !mask ) return value
+
+			const valueToString = value.toString().trim()
+
+			let masked = ''
+			let index = 0
+
+			for( let i = 0; i <= mask.length - 1; i++ ) {
+				if( mask.charAt(i) === '#') {
+					if( valueToString.charAt( index ) )
+						masked += valueToString.charAt( index++ )
+				} else {
+					if( mask.charAt(i) )
+						masked += mask.charAt(i)
+				}
+			}
+
+			return masked
+		},
+		sanitizer(number) {
+			return number.replace(/[^0-9]/g, '')
+		},
+		pushMessage() {
+			if( !this.text ) return
+
+			socket.emit('PRIVATE_MESSAGE', {
+				content: {
+					number: this.form.number,
+					name: this.form.name,
+					text: this.text,
+					picture: require(`@/assets/${this.form.name}.jpeg`),
+				},
+				to: 11111111111
+			})
+
+			this.currentChat.addMessage({
+				text: this.text,
+				number: this.sanitizer(this.form.number),
+				fromMe: true,
+				time: Math.floor(new Date().getTime() / 1000)
+			})
+
+			this.text = ''
+		},
+		scrollChat() {
+			this.$nextTick(() => {
+				this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight
+			})
+		},
+	},
+	mounted() {
+		socket.on('PRIVATE_MESSAGE', (data) => {
+			this.currentChat.addMessage({
+				text: data.text,
+				name: data.name,
+				picture: data.picture,
+				time: Math.floor(new Date().getTime() / 1000)
+			})
+
+			this.scrollChat()
+		})
+
+		window.addEventListener('keydown', (e) => {
+			if( e.keyCode === 13 ) this.pushMessage()
+		})
 	},
 }
 </script>

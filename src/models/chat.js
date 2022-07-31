@@ -18,7 +18,7 @@ export default class Chat {
 			fromMe: options.fromMe,
 			text: options.text,
 			read: options.read,
-			time: Math.floor(new Date().getTime() / 1000),
+			time: options.time || Math.floor(new Date().getTime() / 1000),
 			getHumanTime: this.getHumanTime.bind(this),
 			isLastMessageMy: this.isLastMessageMy.bind(this)
 		})
@@ -81,10 +81,10 @@ export default class Chat {
 
 	isLastMessageMy = function() {
 		if( !this.messages.length ) return ''
-		return this.messages[this.messages.length - 1].number = this.number
+		return this.messages[this.messages.length - 1].fromMe
 	}
 
 	sanitizer = function(number) { 
-		return number.replace(/[^0-9*#]/g, '')
+		return number && number.replace(/[^0-9*#]/g, '')
 	}
 }

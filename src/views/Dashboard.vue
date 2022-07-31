@@ -50,20 +50,20 @@
 		<aside class="container bg-[#F6F7FA]">
 			<div class="flex items-center justify-between my-7">
 				<h5 class="text-lg font-bold">
-					Messages (10)
+					Messages ({{ chats.length }})
 				</h5>
 				<button class="bg-white rounded-lg shadow-md grid place-content-center w-8 h-8">
 					<PencilAltIcon class="w-4" />
 				</button>
 			</div>
 			<div class="flex items-center border rounded-l-full rounded-r-full bg-transparent px-3">
-				<input type="text" class="border-0 bg-transparent placeholder:text-slate-400 text-slate-800 flex-1 outline-none" placeholder="Search">
+				<input v-model="filter_text" type="text" class="border-0 bg-transparent placeholder:text-slate-400 text-slate-800 flex-1 outline-none" placeholder="Search">
 				<button class="w-8 grid place-content-center my-3 min-w-fit">
 					<SearchIcon class="w-4 mx-auto fill-slate-400" />
 				</button>
 			</div>
 			<ul class="py-5 divide-y">
-				<li v-for="(chat, index) in chats" :key="index" class="cursor-pointer" @click="setChat(chat)"><ChatItem :chat="chat" /></li>
+				<li v-for="(chat, index) in filterChats" :key="index" class="cursor-pointer" @click="setChat(chat)"><ChatItem :chat="chat" /></li>
 			</ul>
 		</aside>
 		<main class="grid grid-rows-[56px,auto] container bg-[#F6F7FA]">
@@ -83,7 +83,10 @@
 					<ChatAltIcon class="w-5" />
 				</li>
 				<li class="relative curso-pointer flex items-center">
-					<img src="@/assets/user.png" alt="User" class="rounded-full max-w-[56px] max-h-[56px] overflow-hidden">
+					<div class="relative">
+						<img src="@/assets/user.png" alt="User" class="rounded-full max-w-[56px] max-h-[56px] overflow-hidden">
+						<div class="w-2 h-2 rounded-full ring-2 ring-white absolute bottom-0 right-1" :class="connected ? 'bg-green-500' : 'bg-red-600' "></div>
+					</div>
 					<ChevronDownIcon class="w-5 ml-3" />
 				</li>
 			</ul>
@@ -144,6 +147,7 @@ import Message from '@/components/Message.vue'
 import Dealier from '@/components/Dealier.vue'
 
 import Chat from '@/models/chat.js'
+import socket from '@/services/socket.js'
 
 import { 
 	HomeIcon,
@@ -200,25 +204,39 @@ export default {
 	},
 	data() {
 		return {
-			colapsed: false,
 			isOpen: false,
+			colapsed: false,
 			currentChat: null,
 			chats: [],
 			text: '',
+			connected: false,
+			filter_text: '',
 		}
 	},
 	methods: {
 		setChat(chat) {
 			this.currentChat = chat
+			this.currentChat.readAllMessages()
 		},
 		pushMessage() {
 			if( !this.text.trim() ) return
+
+			socket.emit('PRIVATE_MESSAGE', {
+				content: {
+					number: 11111111111,
+					name: 'Hebert Lima',
+					text: this.text,
+					picture: require('@/assets/user.png'),
+				},
+				to: this.currentChat.number
+			})
 
 			this.currentChat.addMessage({
 				name: 'Hebert Lima',
 				fromMe: true,
 				text: this.text,
 				picture: require('@/assets/user.png'),
+				time: Math.floor(new Date().getTime() / 1000)
 			})
 
 			this.scrollChat()
@@ -241,30 +259,86 @@ export default {
 		},
 		toggle() {
 			this.colapsed = !this.colapsed
+		},
+		createFakeChats() {
+			const goku = new Chat({
+				name: 'Son Goku', 
+				text: 'Trabalhe arduamente e nunca deixe de sonhar. 🏃‍♂️',
+				picture: require('@/assets/goku.jpeg'),
+			})
+
+			const sinon = new Chat({
+				name: 'Sinon', 
+				text: 'One shot, one kill!!',
+				picture: require('@/assets/sinon.jpeg'),
+			})
+
+			sinon.addMessage({text: '🔫'})
+
+			const kira = new Chat({
+				name: 'K.', 
+				text: 'Sou o homem que salvará os oprimidos e serei o Deus de um novo mundo',
+				picture: require('@/assets/kira.jpeg'),
+			})
+
+			this.chats.push(goku,sinon, kira)		
+		},
+		findChatByNumber(number) {
+			return this.chats.indexOf(this.chats.find(chat => chat.number === number))
+		},
+		sanitizer(number) {
+			return number.replace(/[^0-9]/g, '')
+		},
+	},
+	created() {
+		socket.auth = {
+			name: 'Hebert Lima',
+			number: 11111111111
 		}
+
+		socket.connect()
+	},
+	beforeUnmount() {
+		socket.disconnect()
 	},
 	mounted() {
-		const goku = new Chat({
-			name: 'Son Goku', 
-			text: 'Trabalhe arduamente e nunca deixe de sonhar. 🏃‍♂️',
-			picture: require('@/assets/goku.jpeg'),
+		socket.on('disconnect', () => this.connected = false)
+		socket.on('connected', () => this.connected = true)
+
+		socket.on('WELCOME', message => console.log(message))
+
+		socket.on('PRIVATE_MESSAGE', (data) => {
+			console.log( data )
+			const indexChat = this.findChatByNumber(this.sanitizer(data.number))
+			if( indexChat >= 0 && this.chats.length > 0 ) {
+				this.chats[indexChat].addMessage({
+					text: data.text,
+					time: Math.floor(new Date().getTime() / 1000)
+				})
+			} else {
+				const chat = new Chat({
+					number: this.sanitizer(data.number),
+					name: data.name,
+					text: data.text,
+					picture: data.picture,
+					fromMe: false,
+					time: Math.floor(new Date().getTime() / 1000)
+				})
+
+				this.chats.push(chat)
+			}
 		})
 
-		const sinon = new Chat({
-			name: 'Sinon', 
-			text: 'One shot, one kill!!',
-			picture: require('@/assets/sinon.jpeg'),
+		window.addEventListener('keydown', (e) => {
+			if( e.keyCode === 13 ) this.pushMessage()
 		})
-
-		sinon.addMessage({text: '🔫'})
-
-		const kira = new Chat({
-			name: 'K.', 
-			text: 'Sou o homem que salvará os oprimidos e serei o Deus de um novo mundo',
-			picture: require('@/assets/kira.jpeg'),
-		})
-
-		this.chats.push(goku,sinon, kira)		
 	},
+	computed: {
+		filterChats() {
+			return this.filter_text.length
+				? this.chats.filter(chat => chat.name.includes(this.filter_text) || chat.getLastMessage().includes(this.filter_text))
+				: this.chats
+		}
+	}
 }
 </script>
