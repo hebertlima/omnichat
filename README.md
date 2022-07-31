@@ -1,6 +1,8 @@
 # OmniChat em Vue
 
 !['Capa do projeto'](animation.webp)
+
+!['Chat em ação'](chat-video.webp)
 ### Sobre o projeto
 
 Esse projeto é um OmniChat; em outras palavras: um Hub de atendimento (objetivo centralizar canais de atendimento em um só lugar), esse pojeto esta sendo desenvolvido durante as lives que faço na [twitch](https://www.twitch.tv/limahebert) aos <b>Sábados 9 am</b>, com esse projeto busco explorar novas tecnologia e desafios como Socket.io, WebRTC, Softphone, arquitetura de software, aprender e ensinar entusiastas de desenvolvimento sobre essas tecnologias!
