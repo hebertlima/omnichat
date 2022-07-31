@@ -1,8 +1,11 @@
 # OmniChat em Vue
 
+### Chat Realtime
+!['Chat em ação'](chat-video.webp)
+
+### Discador Softphone (último recurso)
 !['Capa do projeto'](animation.webp)
 
-!['Chat em ação'](chat-video.webp)
 ### Sobre o projeto
 
 Esse projeto é um OmniChat; em outras palavras: um Hub de atendimento (objetivo centralizar canais de atendimento em um só lugar), esse pojeto esta sendo desenvolvido durante as lives que faço na [twitch](https://www.twitch.tv/limahebert) aos <b>Sábados 9 am</b>, com esse projeto busco explorar novas tecnologia e desafios como Socket.io, WebRTC, Softphone, arquitetura de software, aprender e ensinar entusiastas de desenvolvimento sobre essas tecnologias!
@@ -19,8 +22,8 @@ Esse projeto é um OmniChat; em outras palavras: um Hub de atendimento (objetivo
  - [x] Operaçoes básicas do chat
  - [x] Implementação do chat realtime (express + socket.io)
 ## O que será feito?
- - [ ] Integração com WebPhone (fazer/receber ligaçoes no hub)
  - [ ] Criação de Widget
+ - [ ] Integração com WebPhone (fazer/receber ligaçoes no hub)
 
  ## Frameworks
  - Vue3
@@ -36,12 +39,12 @@ Esse projeto é OpenSource, e você é autorizado a baixar, modificar e comercia
 yarn install
 ```
 
-### Start Development Server
+### start vue
 ```
 yarn dev
 ```
 
-### Start express
+### start express
 ```
 yarn api
 ```
