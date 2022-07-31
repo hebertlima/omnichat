@@ -34,17 +34,12 @@ Esse projeto é OpenSource, e você é autorizado a baixar, modificar e comercia
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Start Development Server
 ```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
+yarn dev
 ```
 
-### Lints and fixes files
+### Start express
 ```
-yarn lint
+yarn api
 ```
