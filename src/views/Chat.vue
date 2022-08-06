@@ -10,7 +10,7 @@
 				<button class="w-8 grid place-items-center my-3 min-w-fit">
 					<PaperClipIcon class="w-4 mx-auto" />
 				</button>
-				<input v-model="text" type="text" class="bg-transparent border-0 placeholder:text-slate-400 text-slate-800 flex-1 outline-none" placeholder="Yout message">
+				<input v-model="form.text" type="text" class="bg-transparent border-0 placeholder:text-slate-400 text-slate-800 flex-1 outline-none" placeholder="Yout message">
 				<button class="w-8 grid place-items-center my-3 min-w-fit">
 					<PhotographIcon class="w-4 mx-auto" />
 				</button>
@@ -55,12 +55,18 @@ export default {
 	data() {
 		return {
 			isAuthenticated: false,
+			currentChat: null,
+			erase: false,
 			form: {
 				name: '',
-				number: ''
+				number: '',
+				text: '',
 			},
-			currentChat: null,
-			text: '',
+			pictures: {
+				goku: require("@/assets/goku.jpeg"),
+				kira: require("@/assets/kira.jpeg"),
+				sinon: require("@/assets/sinon.jpeg"),
+			},
 		}
 	},
 	methods: {
@@ -73,8 +79,7 @@ export default {
 				this.currentChat = new Chat({
 					name: name, 
 					number: number,
-					picture: require(`@/assets/${this.form.name}.jpeg`),
-					time: Math.floor(new Date().getTime() / 1000)
+					picture: this.pictures[name],
 				})
 
 				socket.auth = {
@@ -111,34 +116,57 @@ export default {
 			return number.replace(/[^0-9]/g, '')
 		},
 		pushMessage() {
-			if( !this.text ) return
+			if( !this.form.text.trim() ) return
 
 			socket.emit('PRIVATE_MESSAGE', {
 				content: {
 					number: this.form.number,
 					name: this.form.name,
-					text: this.text,
-					picture: require(`@/assets/${this.form.name}.jpeg`),
+					text: this.form.text,
+					picture: this.pictures[this.form.name],
 				},
 				to: 11111111111
 			})
 
 			this.currentChat.addMessage({
-				text: this.text,
+				text: this.form.text,
 				number: this.sanitizer(this.form.number),
 				fromMe: true,
-				time: Math.floor(new Date().getTime() / 1000)
+				time: Math.floor(new Date().getTime() / 1000 ),
 			})
 
-			this.text = ''
+			this.form.text = ''
+			this.scrollChat()
 		},
 		scrollChat() {
+			if( !this.currentChat?.messages.length ) return
+
 			this.$nextTick(() => {
 				this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight
 			})
 		},
 	},
+	watch: {
+		'form.number'(value) {
+			if(this.erase) return
+			value = this.sanitizer(value)
+			const _mask = value.length < 11 ? '(##) ####-####' : '(##) # ####-####'
+			this.form.number = this.mask(value, _mask)
+		}
+	},
+	beforeUnmount() {
+		socket.disconnect()
+	},
+	unmounted() {
+		socket.off("connect_error");
+	},
 	mounted() {
+		window.addEventListener('keydown', (e) => {
+			this.erase = e.keyCode === 8
+
+			if( e.keyCode === 13 ) this.pushMessage()
+		})
+
 		socket.on('PRIVATE_MESSAGE', (data) => {
 			this.currentChat.addMessage({
 				text: data.text,
@@ -150,9 +178,13 @@ export default {
 			this.scrollChat()
 		})
 
-		window.addEventListener('keydown', (e) => {
-			if( e.keyCode === 13 ) this.pushMessage()
+		socket.on("connect_error", (err) => {
+			if (err.message === "invalid username") {
+				this.isAuthenticated = false;
+			}
 		})
+
+		this.scrollChat()
 	},
 }
 </script>
