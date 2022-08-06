@@ -38,7 +38,7 @@ io.on('connection', socket => {
 io.use((socket, next) => {
 	const { name } = socket.handshake.auth
 
-	if(!name) return next(new Error('Authentication error'))
+	if(!name) return next(new Error('invalid name'))
 
 	if(!currentsUsers[socket.handshake.auth.number])
 		currentsUsers[socket.handshake.auth.number] = { name, id: socket.id }
