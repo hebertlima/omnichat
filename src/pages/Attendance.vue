@@ -232,7 +232,7 @@ export default {
 		socket.disconnect()
 	},
 	mounted() {
-		this.createFakeChats()
+		// this.createFakeChats()
 
 		window.addEventListener('keydown', (e) => {
 			if( e.keyCode === 13 ) this.pushMessage()
