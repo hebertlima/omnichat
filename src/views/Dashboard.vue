@@ -71,7 +71,7 @@
 				<li class="relative curso-pointer">
 					<PhoneIcon class="w-5" />
 				</li>
-				<li class="relative curso-pointer" @click="response()">
+				<li class="relative curso-pointer">
 					<CalendarIcon class="w-5" />
 				</li>
 				<li class="relative curso-pointer">
@@ -217,6 +217,7 @@ export default {
 		setChat(chat) {
 			this.currentChat = chat
 			this.currentChat.readAllMessages()
+			this.scrollChat()
 		},
 		pushMessage() {
 			if( !this.text.trim() ) return
@@ -232,8 +233,8 @@ export default {
 			})
 
 			this.currentChat.addMessage({
-				name: 'Hebert Lima',
 				fromMe: true,
+				name: 'Hebert Lima',
 				text: this.text,
 				picture: require('@/assets/user.png'),
 				time: Math.floor(new Date().getTime() / 1000)
@@ -244,13 +245,6 @@ export default {
 			this.currentChat.readAllMessages()
 
 			this.text = ''
-		},
-		response() {
-			this.currentChat.addMessage({
-				text: 'Hello, how can I help you?',
-			})
-
-			this.scrollChat()
 		},
 		scrollChat() {
 			this.$nextTick(() => {
@@ -287,7 +281,7 @@ export default {
 			return this.chats.indexOf(this.chats.find(chat => chat.number === number))
 		},
 		sanitizer(number) {
-			return number.replace(/[^0-9]/g, '')
+			return number.replace(/[^0-9*#]/g, '')
 		},
 	},
 	created() {
@@ -302,13 +296,16 @@ export default {
 		socket.disconnect()
 	},
 	mounted() {
+		window.addEventListener('keydown', (e) => {
+			if( e.keyCode === 13 ) this.pushMessage()
+		})
+
 		socket.on('disconnect', () => this.connected = false)
-		socket.on('connected', () => this.connected = true)
+		socket.on('connect', () => this.connected = true)
 
 		socket.on('WELCOME', message => console.log(message))
 
 		socket.on('PRIVATE_MESSAGE', (data) => {
-			console.log( data )
 			const indexChat = this.findChatByNumber(this.sanitizer(data.number))
 			if( indexChat >= 0 && this.chats.length > 0 ) {
 				this.chats[indexChat].addMessage({
@@ -322,15 +319,12 @@ export default {
 					text: data.text,
 					picture: data.picture,
 					fromMe: false,
-					time: Math.floor(new Date().getTime() / 1000)
 				})
 
 				this.chats.push(chat)
 			}
-		})
 
-		window.addEventListener('keydown', (e) => {
-			if( e.keyCode === 13 ) this.pushMessage()
+			this.scrollChat()
 		})
 	},
 	computed: {
