@@ -2,8 +2,8 @@ export default class Chat {
 	constructor(options) {
 		this.picture = options.picture || 'http://via.placeholder.com/56'
 		this.name = options.name
-		this.text = options.text
 		this.number = this.sanitizer(options.number)
+		this.text = options.text
 		this.messages = []
 
 		if( options.text )
@@ -81,7 +81,7 @@ export default class Chat {
 
 	isLastMessageMy = function() {
 		if( !this.messages.length ) return ''
-		return this.messages[this.messages.length - 1].fromMe
+		return this.messages[this.messages.length - 1].number === this.number
 	}
 
 	sanitizer = function(number) { 
