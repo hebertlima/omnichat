@@ -3,6 +3,9 @@
 ### Chat Realtime
 !['Chat em ação'](chat-video.webp)
 
+### Widget
+!['Capa do projeto'](widget.webp)
+
 ### Discador Softphone (último recurso)
 !['Capa do projeto'](animation.webp)
 
