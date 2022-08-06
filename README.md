@@ -48,3 +48,8 @@ yarn dev
 ```
 yarn api
 ```
+
+### genmerate widget 
+```
+npx webpack -c webpack.config.js 
+```
