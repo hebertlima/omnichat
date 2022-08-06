@@ -48,5 +48,6 @@ io.use((socket, next) => {
 })
 
 app.use(express.json())
+app.use(express.static(__dirname + '/public'))
 app.use(routes)
 server.listen(3333)
