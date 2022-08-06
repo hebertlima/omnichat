@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Site</title>
+	<script src="//localhost:3333/omnichat.js"></script>
+	<script>
+		// omnichat('SITE', 'TOKEN', config);
+	</script>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="relative">
+	<h1 class="bg-red-500">Site de teste</h1>
+
+	<div id="chat-container" class="grid grid-rows-[60px,460px] fixed bottom-0 right-3 w-[320px] translate-y-[90%] hover:translate-y-0 transition-all duration-500">
+		<div id="chat-header" class="flex items-center gap-3 px-4 py-2 rounded-t-lg cursor-pointer bg-[#35495e]">
+			<div class="relative">
+				<img src="#" alt="Dummy" class="rounded-full w-8 h-8 object-cover bg-black">
+				<div class="w-2 h-2 rounded-full ring-white absolute bottom-0 -right-1 bg-green-500"></div>
+			</div>
+			<span class="text-white">OmniChat</span>
+		</div>
+		<div id="chat-auth" class="grid grid-rows-[400px,60px]">
+			<ul id="chat-messages" class="p-2 flex flex-col overflow-y-auto h-[400px] bg-slate-100/20 border border-slate-200">
+				<li class="flex items-start gap-4 mt-8 first:mt-0">
+					<img src="#" alt="Dummy" class="min-w-[26px] min-h-[26px] rounded-full overflow-hidden object-cover block bg-black">
+					<div class="grid">
+						<div class="flex items-center mb-4 gap-2">
+							<h5 class="font-bold text-sm">Atendente</h5>
+							<span class="text-gray-400 text-xs">19:43</span>
+						</div>
+						<p class="p-2 rounded-b-xl max-w-1/2 w-fit relative bg-slate-100 text-slate-800 text-sm">
+							Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsam, voluptates.
+						</p>
+					</div>
+				</li>
+				<li class="flex items-start gap-4 mt-8 first:mt-0 flex-row-reverse">
+					<img src="#" alt="Dummy" class="min-w-[36px] min-h-[36px] rounded-full overflow-hidden object-cover block bg-black">
+					<div class="grid">
+						<div class="flex items-center mb-4 flex-row-reverse gap-2">
+							<h5 class="font-bold text-sm">Hebert Lima</h5>
+							<span class="text-gray-400 text-xs">19:45</span>
+						</div>
+						<p class="p-3 rounded-b-xl max-w-1/2 w-fit relative text-white bg-black ml-auto text-sm">
+							Saepe facilis, non consequuntur culpa reprehenderit placeat dolor distinctio vel aliquid velit. Illum, molestiae blanditiis facilis dicta nisi soluta natus.
+						</p>
+					</div>
+				</li>
+				<li class="flex items-start gap-4 mt-8 first:mt-0">
+					<img src="#" alt="Dummy" class="min-w-[26px] min-h-[26px] rounded-full overflow-hidden object-cover block bg-black">
+					<div class="grid">
+						<div class="flex items-center mb-4 gap-2">
+							<h5 class="font-bold text-sm">Atendente</h5>
+							<span class="text-gray-400 text-xs">19:43</span>
+						</div>
+						<p class="p-2 rounded-b-xl max-w-1/2 w-fit relative bg-slate-100 text-slate-800 text-sm">
+							Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsam, voluptates.
+						</p>
+					</div>
+				</li>
+				<li class="flex items-start gap-4 mt-8 first:mt-0 flex-row-reverse">
+					<img src="#" alt="Dummy" class="min-w-[36px] min-h-[36px] rounded-full overflow-hidden object-cover block bg-black">
+					<div class="grid">
+						<div class="flex items-center mb-4 flex-row-reverse gap-2">
+							<h5 class="font-bold text-sm">Hebert Lima</h5>
+							<span class="text-gray-400 text-xs">19:45</span>
+						</div>
+						<p class="p-3 rounded-b-xl max-w-1/2 w-fit relative text-white bg-black ml-auto text-sm">
+							Saepe facilis, non consequuntur culpa reprehenderit placeat dolor distinctio vel aliquid velit. Illum, molestiae blanditiis facilis dicta nisi soluta natus.
+						</p>
+					</div>
+				</li>
+			</ul>
+			<div id="chat-controls" class="flex items-center bg-slate-100 px-3">
+				<input type="text" class="bg-transparent border-0 placeholder:text-slate-400 text-slate-800 flex-1 outline-none" placeholder="Yout message">
+				<button class="w-8 grid place-items-center my-3 min-w-fit" >
+					<svg class="w-4 mx-auto rotate-45 relative -top-[2px]" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+					</svg>
+				</button>
+			</div>
+		</div>
+		<div id="chat-form" class="hidden place-content-center bg-slate-500">
+			<div class="grid w-[12.5rem] gap-4">
+				<input type="text" class="p-2 w-full outline-none" placeholder="nome" />
+				<input type="text" class="p-2 w-full outline-none" placeholder="numero" />
+				<button type="button" class="bg-black text-white p-2 rounded-lg w-full">Entrar</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
