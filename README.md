@@ -24,8 +24,8 @@ Esse projeto é um OmniChat; em outras palavras: um Hub de atendimento (objetivo
  - [x] Simulação do discador de ligação
  - [x] Operaçoes básicas do chat
  - [x] Implementação do chat realtime (express + socket.io)
+ - [ ] Criação de Widget (WIP)
 ## O que será feito?
- - [ ] Criação de Widget
  - [ ] Integração com WebPhone (fazer/receber ligaçoes no hub)
 
  ## Frameworks
