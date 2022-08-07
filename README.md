@@ -52,7 +52,7 @@ yarn dev
 yarn api
 ```
 
-### genmerate widget 
+### generate widget (WIP)
 ```
 npx webpack -c webpack.config.js 
 ```
