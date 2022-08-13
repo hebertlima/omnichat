@@ -1,0 +1,203 @@
+/* Omnichat style */
+#omnichat-container {
+	position: fixed;
+	display: grid;
+	grid-template-rows: 60px 460px;
+	bottom: 0;
+	right: 15px;
+	width: 320px;
+	transform: translateY(90%);
+	transition: all 0.25s linear 0s;
+}
+
+#omnichat-container:hover {
+	transform: translateY(0);
+}
+/* Header */
+#omnichat-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 8px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	cursor: pointer;
+	background-color: #35495e;
+}
+
+#omnichat-header-group {
+	position: relative;
+	display: flex;
+	width: 46px;
+	height: 46px;
+}
+
+#omnichat-header-group img {
+	display: block;
+	border-radius: 10rem;
+	object-fit: cover;
+	background-color: #000;
+}
+
+#omnichat-header-group div {
+	display: block;
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	border-radius: 10rem;
+	bottom: 0;
+	right: 0;
+	background-color: greenyellow;
+}
+
+#omnichat-header-title {
+	color: #fff;
+	font-family: sans-serif;
+	font-weight: 600;
+}
+
+/* Auth Form */
+#omnichat-form {
+	/* display: grid; */
+	display: none;
+	place-content: center;
+	background-color: #35495e;
+}
+
+#omnichat-form-group {
+	display: grid;
+	box-sizing: border-box;
+	width: 12.5rem;
+	gap: 16px;
+}
+
+#omnichat-form-group input {
+	display: block;
+	padding: 12px;
+	width: 100%;
+	outline: none;
+	border: none;
+	border-radius: 4px;
+	background-color: #fff;
+	font-size: medium;
+	font-family: sans-serif;
+}
+
+#omnichat-form-group button {
+	padding: 10px;
+	width: 100%;
+	border: none;
+	color: #fff;
+	border-radius: 4px;
+	background-color: #000;
+}
+
+/* Container Chat Message */
+#omnichat-container-messages {
+	display: grid;
+	grid-template-rows: 400px 60px;
+}
+
+#omnichat-messages {
+	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	height: 400px;
+	background-color: rgb(241, 245, 249, .2);
+	border-color: rgba(226, 232, 240);
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-style: solid;
+}
+
+#omnichat-controls {
+	display: flex;
+	align-items: center;
+	background-color: rgba(241, 245, 249);
+	padding: 0 12px;
+}
+
+#omnichat-controls input {
+	background-color: transparent;
+	border: none;
+	color: rgb(30 41 59);
+	flex: 1;
+	outline: none;
+}
+
+#omnichat-controls input::placeholder {
+	color: rgb(148 163 184);
+}
+
+#omnichat-controls button {
+	width: 32px;
+	display: grid;
+	place-items: center;
+	margin: 12px 0;
+	min-width: fit-content;
+}
+
+#omnichat-controls button svg {
+	width: 16px;
+	height: 16px;
+	fill: rgb(30 41 59);
+	margin: 0 auto;
+	transform: rotate(45deg);
+	position: relative;
+	top: -2px;
+}
+
+#omnichat-chat-message {
+	display: flex;
+	align-items: start;
+	gap: 16px;
+	margin-top: 32px;
+}
+
+#omnichat-chat-message:first-child{
+	margin-top: 0;
+}
+
+#omnichat-chat-message-img {
+	width: 26px;
+	height: 26px;
+	border-radius: 10rem;
+	overflow: hidden;
+	object-fit: cover;
+	display: block;
+	background-color: #000;
+}
+
+#omnichat-chat-message-group {
+	display: grid;
+}
+
+#omnichat-user-group {
+	display: flex;
+	align-items: center;
+	margin-bottom: 16px;
+	gap: 8px;
+}
+
+#omnichat-display-name {
+	font-weight: 700;
+	font-size: small;
+}
+
+#omnichat-display-time {
+	color: rgb(156 163 175);
+	font-size: small;
+}
+
+#omnichat-message-text {
+	color: rgb(30 41 59);
+	padding: 8px;
+	border-bottom-left-radius: 12px;
+	border-bottom-right-radius: 12px;
+	position: relative;
+	background-color: rgb(241 245 249);
+	color: rgb(30 41 59);
+	font-size: smaller;
+	font-size: medium;
+}
